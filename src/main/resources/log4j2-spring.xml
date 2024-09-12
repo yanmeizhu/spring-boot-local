@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="sg.gov.moh.nphc.claimsflow.common.log">
+    <Properties>
+        <Property name="LOG_DIR">${env:LOG_DIR:-/nphc/logs}</Property>
+        <Property name="CONSOLE_PATTERN">${spring:logging.pattern.console}</Property>
+        <Property name="FILE_PATTERN">${spring:logging.pattern.file}</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="${CONSOLE_PATTERN}" disableAnsi="false"/>
+        </Console>
+        <Rewrite name="Rewrite">
+            <DataMaskingRewritePolicy/>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Rewrite>
+        <RollingFile name="RollingFile"
+                     fileName="${LOG_DIR}/internet-bff.log"
+                     filePattern="${LOG_DIR}/internet-bff-%i.log.gz">
+            <PatternLayout>
+                <pattern>${FILE_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy
+                        size="32 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Rewrite"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
